@@ -20,7 +20,7 @@ Feature<unsigned long> current_millis;
 
 // Create a callback
 void string_callback(unsigned long _current_millis) {
-  Serial.printf("my_string has changed to: \"%s\"\n", _current_millis);
+  Serial.printf("my_string has changed to: \"%u\"\n", _current_millis);
 }
 
 void setup() {
