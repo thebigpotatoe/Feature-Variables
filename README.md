@@ -29,6 +29,10 @@ void string_callback(unsigned long _current_millis) {
 }
 
 void setup() {
+  // Start Serial
+  Serial.begin(115200);
+  Serial.println();
+
   // Add callback to Feature
   current_millis.addEventCallback(string_callback);
 }
