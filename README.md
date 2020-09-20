@@ -1,5 +1,11 @@
 # Features-Variables
 
+[![GitHub release](https://img.shields.io/github/release/thebigpotatoe/Feature-Variables.svg)](https://github.com/thebigpotatoe/Feature-Variables/releases)
+[![arduino-library-badge](https://www.ardu-badge.com/badge/Feature-Variables.svg?)](https://www.ardu-badge.com/Feature-Variables) 
+[![PlatformIO Build Status](https://github.com/thebigpotatoe/Feature-Variables/workflows/PlatformIO%20CI/badge.svg)](https://github.com/thebigpotatoe/Feature-Variables/actions?query=workflow%3A%22PlatformIO+CI%22)
+[![Arduino Build Status](https://github.com/thebigpotatoe/Feature-Variables/workflows/Arduino/badge.svg)](https://github.com/thebigpotatoe/Feature-Variables/actions?query=workflow%3A%22PlatformIO+CI%22)
+[![GitHub License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/thebigpotatoe/Feature-Variables/blob/master/LICENSE)
+
 Features are persistent event driven variables specifically for use with the popular Arduino boards and Espressif series micro controllers. They simplify everything from loading and saving variable data into flash for persistance over reboots, to firing multiple events when the value of a variable has changed, to simplifying data passing when using ArduinoJSON, all in a few lines of easy to understand code.
 
 The library and examples are supported in the Arduino IDE and platformIO for building. Check out the library.properties or platfomio.ini file for idea on how to build the library in the Arduino IDE or on pio. Included are a heap of examples on how to use each of the advantages of Features in your application fully compatible with both build methods.
