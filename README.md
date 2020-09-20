@@ -37,12 +37,12 @@ void loop() {
 ## Examples
 For a comprehensive understanding of the API and how to use Features check out the examples folder. In there you can find several examples showing:
 
-- [Basic use of Features](examples/Basic_Use)
-- [How to use in a storage container like std::vector](examples/Container_Example)
-- [All methods of getting the value from the Feature](examples/Alternate_Get_Methods)
-- [All methods of setting the value from the Feature](examples/Alternate_Set_Methods)
-- [Delay saving of the value to speed up the application](examples/Delayed_Saving)
-- [How to use with ArduinoJSON very easily](examples/Using_ArduinoJson)
+- [Basic use of Features](examples/Basic_Use/Basic_Use.ino)
+- [How to use in a storage container like std::vector](examples/Container_Example/Container_Example.ino)
+- [All methods of getting the value from the Feature](examples/Alternate_Get_Methods/Alternate_Get_Methods.ino)
+- [All methods of setting the value from the Feature](examples/Alternate_Set_Methods/Alternate_Set_Methods.ino)
+- [Delay saving of the value to speed up the application](examples/Delayed_Saving/Delayed_Saving.ino)
+- [How to use with ArduinoJSON very easily](examples/Using_ArduinoJson/Using_ArduinoJson.ino)
 
 ## Contributing
 
