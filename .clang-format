@@ -1,0 +1,14 @@
+BasedOnStyle: Google
+IndentWidth: 2
+TabWidth: 2
+ColumnLimit: 0
+AccessModifierOffset: -1
+AllowShortIfStatementsOnASingleLine: true
+IndentCaseLabels: false
+NamespaceIndentation: All
+
+PointerAlignment : Left
+AlignConsecutiveDeclarations : true
+AlignAfterOpenBracket : true
+
+SortIncludes : false
