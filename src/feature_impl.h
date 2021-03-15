@@ -39,8 +39,10 @@ namespace FeatureVariables {
   template <class T>
   class Feature : public FeatureBase {
    private:  // Typedefs
-    typedef std::function<void(T)>     eventCallback;
-    typedef std::vector<eventCallback> eventCallbackVector;
+    typedef std::function<void(T)>      eventCallback;
+    typedef std::vector<eventCallback>  eventCallbackVector;
+    typedef std::function<bool(T, T)>   filterCallback;
+    typedef std::vector<filterCallback> filterCallbackVector;
 
    public:  // Constructors
     Feature() : FeatureBase(), value(), previousValue() { init(nullptr); }
@@ -52,6 +54,7 @@ namespace FeatureVariables {
       eventFlags = other.eventFlags;
       saveDelay = other.saveDelay;
       eventsVector = other.eventsVector;
+      filtersVector = other.filtersVector;
     }
     ~Feature() {}
 
@@ -59,6 +62,9 @@ namespace FeatureVariables {
     void init(T* init_value) {
       // Set the type for the base class
       setType<T>();
+
+      // Set the default parity filter
+      addFilter([=](T _value, T _previousValue) { return _value != _previousValue; });
 
 #if defined EFFORTLESS_SPIFFS_VERSION_MAJOR && EFFORTLESS_SPIFFS_VERSION_MAJOR == 2
 #if defined ARDUINO
@@ -103,8 +109,15 @@ namespace FeatureVariables {
       return previousValue;
     };
     virtual bool setValue(const T _value, uint8_t _fireEvents = 0xff) {
+      //  Run through filters
+      bool filterBool = true;
+      for (auto filter : filtersVector) {
+        if (!filter(_value, previousValue)) return false;
+      }
+
       // Check if the incoming value is different
-      if (!valueCmp(_value)) {
+      // if (!valueCmp(_value)) {
+      if (filterBool) {
         // Store the new and last value
         previousValue = value;
         value = _value;
@@ -129,6 +142,14 @@ namespace FeatureVariables {
         if (logger) logger->printf("[%s] - Values were the same\n", name);
       }
       return false;
+    }
+
+   public:  // Filters
+    virtual void addFilter(filterCallback _callback) {
+      if (_callback) filtersVector.push_back(_callback);
+    }
+    virtual void clearFilters() {
+      filtersVector.clear();
     }
 
    protected:  // Value Comparisson Methods
@@ -356,11 +377,12 @@ namespace FeatureVariables {
 #endif
 
    protected:  // Private Stored Data
-    T                   value;
-    T                   previousValue;
-    uint8_t             eventFlags = FEATURE_FIRE_EVENTS_SAVE_VALUES;
-    uint32_t            saveDelay = 0;
-    eventCallbackVector eventsVector;
+    T                    value;
+    T                    previousValue;
+    uint8_t              eventFlags = FEATURE_FIRE_EVENTS_SAVE_VALUES;
+    uint32_t             saveDelay = 0;
+    eventCallbackVector  eventsVector;
+    filterCallbackVector filtersVector;
 
 #ifdef ARDUINO
     Print* logger = FEATURE_DEBUG_OBJECT;
