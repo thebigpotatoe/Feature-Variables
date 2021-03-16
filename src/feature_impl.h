@@ -39,12 +39,12 @@ namespace FeatureVariables {
   template <class T>
   class Feature : public FeatureBase {
    private:  // Typedefs
-    typedef std::function<void(T)>        eventCallback;
-    typedef std::vector<eventCallback>    eventCallbackVector;
-    typedef std::function<bool(T, T)>     filterCallback;
-    typedef std::vector<filterCallback>   filterCallbackVector;
-    typedef std::function<void(T&)>           modifierCallback;
-    typedef std::vector<modifierCallback> modifierCallbackVector;
+    typedef std::function<void(T)>                  eventCallback;
+    typedef std::vector<eventCallback>              eventCallbackVector;
+    typedef std::function<bool(const T&, const T&)> filterCallback;
+    typedef std::vector<filterCallback>             filterCallbackVector;
+    typedef std::function<void(T&)>                 modifierCallback;
+    typedef std::vector<modifierCallback>           modifierCallbackVector;
 
    public:  // Constructors
     Feature() : FeatureBase(), value(), previousValue() { init(nullptr); }
