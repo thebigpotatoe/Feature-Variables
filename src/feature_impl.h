@@ -39,10 +39,12 @@ namespace FeatureVariables {
   template <class T>
   class Feature : public FeatureBase {
    private:  // Typedefs
-    typedef std::function<void(T)>      eventCallback;
-    typedef std::vector<eventCallback>  eventCallbackVector;
-    typedef std::function<bool(T, T)>   filterCallback;
-    typedef std::vector<filterCallback> filterCallbackVector;
+    typedef std::function<void(T)>        eventCallback;
+    typedef std::vector<eventCallback>    eventCallbackVector;
+    typedef std::function<bool(T, T)>     filterCallback;
+    typedef std::vector<filterCallback>   filterCallbackVector;
+    typedef std::function<void(T&)>           modifierCallback;
+    typedef std::vector<modifierCallback> modifierCallbackVector;
 
    public:  // Constructors
     Feature() : FeatureBase(), value(), previousValue() { init(nullptr); }
@@ -108,7 +110,12 @@ namespace FeatureVariables {
     virtual T getPreviousValue() {
       return previousValue;
     };
-    virtual bool setValue(const T _value, uint8_t _fireEvents = 0xff) {
+    virtual bool setValue(T _value, uint8_t _fireEvents = 0xff) {
+      // Cycle through the modifiers first before filtering
+      for (auto modifier : modifiersVector) {
+        modifier(_value);
+      }
+
       //  Run through filters
       bool filterBool = true;
       for (auto filter : filtersVector) {
@@ -150,6 +157,14 @@ namespace FeatureVariables {
     }
     virtual void clearFilters() {
       filtersVector.clear();
+    }
+
+   public:  // Modifiers
+    virtual void addModifier(modifierCallback _callback) {
+      if (_callback) modifiersVector.push_back(_callback);
+    }
+    virtual void clearModifiers() {
+      modifiersVector.clear();
     }
 
    protected:  // Value Comparisson Methods
@@ -377,12 +392,13 @@ namespace FeatureVariables {
 #endif
 
    protected:  // Private Stored Data
-    T                    value;
-    T                    previousValue;
-    uint8_t              eventFlags = FEATURE_FIRE_EVENTS_SAVE_VALUES;
-    uint32_t             saveDelay = 0;
-    eventCallbackVector  eventsVector;
-    filterCallbackVector filtersVector;
+    T                      value;
+    T                      previousValue;
+    uint8_t                eventFlags = FEATURE_FIRE_EVENTS_SAVE_VALUES;
+    uint32_t               saveDelay = 0;
+    eventCallbackVector    eventsVector;
+    filterCallbackVector   filtersVector;
+    modifierCallbackVector modifiersVector;
 
 #ifdef ARDUINO
     Print* logger = FEATURE_DEBUG_OBJECT;
