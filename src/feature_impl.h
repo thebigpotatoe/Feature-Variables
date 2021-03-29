@@ -119,7 +119,7 @@ namespace FeatureVariables {
       //  Run through filters
       bool filterBool = true;
       for (auto filter : filtersVector) {
-        if (!filter(_value, previousValue)) return false;
+        if (!filter(_value, value)) return false;
       }
 
       // Check if the incoming value is different
