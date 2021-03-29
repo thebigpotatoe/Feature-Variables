@@ -210,33 +210,8 @@ namespace FeatureVariables {
     virtual bool fromJson(JsonObject& json, uint8_t _fireEvents = 0xFF) override {
       if (json.containsKey(name)) {
         // Set the current value using the JSON object
-        T _value = value;
-        setValueFromJson(json);
-
-        // Check if the current value has changed
-        if (!valueCmp(_value)) {
-          // Set the previous value
-          previousValue = _value;
-
-          // Log the change
-          if (logger) logger->printf("[%s] - Value set to \"%s\"\n", name, toString().c_str());
-
-          // Override current storage settings
-          if (_fireEvents == 0xFF) _fireEvents = eventFlags;
-
-          // Call the event callbacks
-          if (_fireEvents & FEATURE_EVENTS_MASK) fireEventCallbacks();
-
-#if defined EFFORTLESS_SPIFFS_VERSION_MAJOR && EFFORTLESS_SPIFFS_VERSION_MAJOR == 2
-          // Store the value
-          if (_fireEvents & FEATURE_SAVE_MASK) saveValue();
-#endif
-
-          // Return true
-          return true;
-        } else {
-          if (logger) logger->printf("[%s] - Values were the same\n", name);
-        }
+        T _value = getValueFromJson(json);
+        return setValue(_value, _fireEvents);
       }
       return false;
     }
@@ -255,26 +230,21 @@ namespace FeatureVariables {
 
    private:  // JSON Template Setters
     template <class U = T>
-    typename FEATURE_ENABLE_IF(!FEATURE_IS_SAME(U, std::string) && !FEATURE_IS_SAME(U, char*), bool)
-        setValueFromJson(JsonObject& jsonObject) {
-      jsonObject[name] = value = jsonObject[name] | value;
-      return true;
+    typename FEATURE_ENABLE_IF(!FEATURE_IS_SAME(U, std::string) && !FEATURE_IS_SAME(U, char*), U)
+        getValueFromJson(JsonObject& jsonObject) {
+      return jsonObject[name].as<U>();
     }
     template <class U = T>
-    typename FEATURE_ENABLE_IF(FEATURE_IS_SAME(U, std::string), bool)
-        setValueFromJson(JsonObject& jsonObject) {
-      jsonObject[name] = jsonObject[name] | value.c_str();
-      value = jsonObject[name].as<const char*>();
-      return true;
+    typename FEATURE_ENABLE_IF(FEATURE_IS_SAME(U, std::string), U)
+        getValueFromJson(JsonObject& jsonObject) {
+      return jsonObject[name].as<const char*>();
     }
     template <class U = T>
-    typename FEATURE_ENABLE_IF(FEATURE_IS_SAME(U, char*), bool)
-        setValueFromJson(JsonObject& jsonObject) {
-      size_t valueSize = strlen(value);
-      // const char* buffer = value;
-      jsonObject[name] = jsonObject[name] | const_cast<const char*>(value);
-      if (snprintf(value, valueSize, "%s", jsonObject[name].as<char*>())) return true;
-      return false;
+    typename FEATURE_ENABLE_IF(FEATURE_IS_SAME(U, char*), char*)
+        getValueFromJson(JsonObject& jsonObject, U _value = nullptr) {
+      size_t valueSize = strlen(_value);
+      snprintf(_value, valueSize, "%s", jsonObject[name].as<char*>());
+      return _value;
     }
 #endif
 
